@@ -70,7 +70,6 @@
             padding-bottom: 30px;
         }
 
-        /* Screens */
         .screen {
             background: var(--card-bg);
             border-radius: 20px;
@@ -93,7 +92,6 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* Buttons & Inputs */
         .btn {
             background: linear-gradient(135deg, var(--primary), var(--primary-light));
             color: white;
@@ -114,10 +112,6 @@
         .btn:hover {
             transform: translateY(-2px);
             box-shadow: 0 6px 16px rgba(79, 70, 229, 0.4);
-        }
-
-        .btn:active {
-            transform: translateY(1px);
         }
 
         .btn-secondary {
@@ -158,7 +152,6 @@
             color: var(--text-main);
         }
 
-        /* Character Selection */
         .char-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
@@ -193,7 +186,6 @@
             font-weight: 700;
         }
 
-        /* Game Board UI */
         .game-layout {
             display: flex;
             flex-direction: column;
@@ -253,7 +245,6 @@
             align-self: center;
         }
 
-        /* SVG Board Overlay for Snakes & Ladders */
         svg.board-svg {
             position: absolute;
             top: 0;
@@ -264,7 +255,6 @@
             z-index: 2;
         }
 
-        /* Tokens on Board */
         .tokens-layer {
             position: absolute;
             top: 0;
@@ -298,7 +288,6 @@
             transition: all 0.3s ease;
         }
 
-        /* Sidebar Control Panel */
         .control-panel {
             width: 100%;
             display: flex;
@@ -376,7 +365,6 @@
             50% { transform: scale(1.15) rotate(10deg); }
         }
 
-        /* Modal Question Popup */
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -481,7 +469,6 @@
             line-height: 1.5;
         }
 
-        /* Footer Signature */
         .developer-sig {
             text-align: center;
             font-size: 0.75rem;
@@ -490,7 +477,6 @@
             font-weight: 600;
         }
 
-        /* Achievements / Badges popup or panel */
         .badge-tag {
             background: #dbeafe;
             color: #1e40af;
@@ -503,7 +489,6 @@
             gap: 4px;
         }
 
-        /* Sound Toggle */
         .top-bar {
             display: flex;
             justify-content: space-between;
@@ -536,12 +521,11 @@
 
 <div class="container">
     
-    <!-- SCREEN 1: START & SETUP -->
     <div id="screen-setup" class="screen">
         <div style="text-align: center; gap: 5px; display: flex; flex-direction: column;">
             <span style="font-size: 3rem;">🎲🐍</span>
             <h2 style="color: var(--primary);">أهلاً بك في رحلة تعلم القاعدة النورانية</h2>
-            <p style="color: var(--text-muted); font-size: 0.9rem;">تعلم القراءة الصحيحة بمتعة وتشويق دون مغادرة المصدر الأصلي!</p>
+            <p style="color: var(--text-muted); font-size: 0.9rem;">بنك أسئلة متكامل (4 أسئلة لكل درس من الدروس العشرين)!</p>
         </div>
 
         <div class="form-group">
@@ -582,268 +566,4 @@
             <label>قواعد السلم والثعبان:</label>
             <select id="rule-mode-select">
                 <option value="edu">الوضع التعليمي (يُشترط الإجابة الصحيحة لصعود السلم)</option>
-                <option value="classic">الوضع التقليدي (الحركة تلقائية والأسئلة للمكافآت)</option>
-            </select>
-        </div>
-
-        <button class="btn" style="width: 100%; margin-top: 10px;" onclick="startGame()">ابدأ اللعب الآن 🚀</button>
-        <div class="developer-sig">إعداد د. محسن الكاشف – Online Teacher Hub</div>
-    </div>
-
-    <!-- SCREEN 2: GAMEPLAY -->
-    <div id="screen-game" class="screen hidden" style="padding: 10px;">
-        <div class="top-bar">
-            <button class="icon-btn" onclick="toggleSound()" id="sound-toggle-btn" title="كتم/تشغيل الصوت">🔊</button>
-            <div style="font-weight: 700; font-size: 0.9rem; color: var(--primary);" id="current-rule-badge">الوضع التعليمي</div>
-            <button class="icon-btn" onclick="backToSetup()" title="العودة للبداية">🏠</button>
-        </div>
-
-        <div class="game-layout">
-            <!-- Board -->
-            <div class="board-container">
-                <svg class="board-svg" id="board-svg" viewBox="0 0 100 100" preserveAspectRatio="none"></svg>
-                <div class="board" id="board-grid"></div>
-                <div class="tokens-layer" id="tokens-layer"></div>
-            </div>
-
-            <!-- Control Panel -->
-            <div class="control-panel">
-                <!-- Player 1 Card -->
-                <div class="player-card-box" id="pcard-0">
-                    <div class="player-info">
-                        <div class="player-avatar" id="pavatar-0">🦁</div>
-                        <div>
-                            <h4 id="pname-disp-0">البطل الأول</h4>
-                            <div style="font-size: 0.8rem; color: var(--text-muted);">المربع: <span id="ppos-0">1</span></div>
-                        </div>
-                    </div>
-                    <div style="text-align: left;">
-                        <span class="badge-tag" id="pbadge-0">⭐ مبتدئ</span>
-                        <div style="font-size: 0.75rem; margin-top: 4px; color: var(--success);" id="pcorrect-0">صحيح: 0</div>
-                    </div>
-                </div>
-
-                <!-- Player 2 Card (if 2 players) -->
-                <div class="player-card-box hidden" id="pcard-1">
-                    <div class="player-info">
-                        <div class="player-avatar" id="pavatar-1">🐰</div>
-                        <div>
-                            <h4 id="pname-disp-1">البطل الثاني</h4>
-                            <div style="font-size: 0.8rem; color: var(--text-muted);">المربع: <span id="ppos-1">1</span></div>
-                        </div>
-                    </div>
-                    <div style="text-align: left;">
-                        <span class="badge-tag" id="pbadge-1">⭐ مبتدئ</span>
-                        <div style="font-size: 0.75rem; margin-top: 4px; color: var(--success);" id="pcorrect-1">صحيح: 0</div>
-                    </div>
-                </div>
-
-                <!-- Dice & Turn Box -->
-                <div class="dice-box">
-                    <div style="font-weight: 700; font-size: 1.05rem;" id="turn-indicator">دور اللاعب: البطل الأول</div>
-                    <div class="dice" id="dice-element">🎲</div>
-                    <button class="btn btn-accent" id="roll-dice-btn" onclick="rollDice()" style="width: 100%;">ارمِ النرد 🎯</button>
-                </div>
-            </div>
-        </div>
-        <div class="developer-sig">Online Teacher Hub – د. محسن الكاشف</div>
-    </div>
-
-    <!-- SCREEN 3: WIN SCREEN -->
-    <div id="screen-win" class="screen hidden" style="text-align: center;">
-        <span style="font-size: 4rem;">🏆🎉</span>
-        <h2 style="color: var(--primary); font-size: 1.8rem;" id="winner-announcement">تهانينا! فاز البطل</h2>
-        <p style="color: var(--text-muted);" id="winner-stats-text">أنهيت الرحلة التعليمية بنجاح كبير!</p>
-        
-        <div style="display: flex; gap: 10px; width: 100%; margin-top: 15px;">
-            <button class="btn" style="flex: 1;" onclick="restartGame()">العب مرة أخرى 🔄</button>
-            <button class="btn btn-secondary" style="flex: 1;" onclick="openMistakesModal()">مراجعة الأخطاء والتعلم 📖</button>
-        </div>
-        <button class="btn btn-accent" style="width: 100%; margin-top: 5px;" onclick="backToSetup()">العودة للرئيسية 🏠</button>
-        <div class="developer-sig">إعداد د. محسن الكاشف – Online Teacher Hub</div>
-    </div>
-
-</div>
-
-<!-- QUESTION MODAL -->
-<div id="question-modal" class="modal-overlay hidden">
-    <div class="modal-card">
-        <div class="question-header">
-            <span id="q-meta-info">الدرس الأول: الحروف الهجائية المفردة</span>
-            <span class="badge-tag" id="q-level-badge">سهل</span>
-        </div>
-        <div class="question-text" id="q-text-content">
-            ما هو اسم الحرف أو الإجابة الصحيحة هنا؟
-        </div>
-        <div class="options-grid" id="q-options-container">
-            <!-- Dynamic Options -->
-        </div>
-        <div class="explanation-box hidden" id="q-explanation-box">
-            <strong>التفسير من الكتاب: </strong><span id="q-explanation-text"></span>
-        </div>
-        <button class="btn hidden" id="q-next-btn" onclick="closeQuestionModal()">متابعة اللعب ➡️</button>
-    </div>
-</div>
-
-<!-- MISTAKES REVIEW MODAL -->
-<div id="mistakes-modal" class="modal-overlay hidden">
-    <div class="modal-card">
-        <h3 style="color: var(--primary); border-bottom: 2px solid #f1f5f9; padding-bottom: 8px;">مراجعة الأسئلة التعليمية</h3>
-        <div id="mistakes-list-container" style="display: flex; flex-direction: column; gap: 10px; max-height: 50vh; overflow-y: auto;">
-            <!-- Mistakes injected here -->
-        </div>
-        <button class="btn" onclick="closeMistakesModal()">إغلاق المراجعة</button>
-    </div>
-</div>
-
-<script>
-    /* ========================================================
-       QUESTION BANK (Strictly from "القاعدة النورانية الفتحية المطورة")
-       ======================================================== */
-    const questionBank = [
-        {
-            id: "Q1",
-            lesson: "الدرس الأول: الحروف الهجائية المفردة",
-            level: "سهل",
-            type: "mcq",
-            question: "في الدرس الأول (الحروف الهجائية المفردة)، كيف يُنطق الحرف الأول من الحروف الهجائية (أ)؟",
-            options: ["ألف", "با", "تا", "ثا"],
-            correct: 0,
-            explanation: "بحسب القاعدة النورانية في الدرس الأول، الحرف الأول هو (ألف)."
-        },
-        {
-            id: "Q2",
-            lesson: "الدرس الأول: الحروف الهجائية المفردة",
-            level: "سهل",
-            type: "mcq",
-            question: "ما هو الحرف الذي يأتي بعد (باء) في الحروف الهجائية المفردة؟",
-            options: ["ثا", "تا", "جيم", "حا"],
-            correct: 1,
-            explanation: "الترتيب الهجائي المفرد في القاعدة: ألف، با، تا، ثا."
-        },
-        {
-            id: "Q3",
-            lesson: "الدرس الثاني: الحروف الهجائية المركبة",
-            level: "متوسط",
-            type: "mcq",
-            question: "في الحروف المركبة (الدرس الثاني)، كيف تُقرأ صيغة (لا) المركبة من لام وألف؟",
-            options: ["لا", "با", "كا", "تا"],
-            correct: 0,
-            explanation: "تُهجى وتقرأ (لا) بحسب الحروف المركبة في القاعدة النورانية."
-        },
-        {
-            id: "Q4",
-            lesson: "الدرس الثالث: الحروف المقطعة",
-            level: "متوسط",
-            type: "mcq",
-            question: "في أوائل السور (الحروف المقطعة)، كيف يُقرأ مطلع سورة البقرة (الم)؟",
-            options: ["ألم", "المَر", "كهيعص", "طه"],
-            correct: 0,
-            explanation: "في الدرس الثالث، الحروف المقطعة في أوائل السور مثل (الم) تُقرأ متهجية مفصلة."
-        },
-        {
-            id: "Q5",
-            lesson: "الدرس الرابع: الحروف المتحركة",
-            level: "سهل",
-            type: "mcq",
-            question: "ما هي الحركة التي تكون فوق الحرف وتُحدث صوتاً خفيفاً مفتوحاً مثل (بَ)؟",
-            options: ["الفتحة", "الكسرة", " الضمة", "السكون"],
-            correct: 0,
-            explanation: "الفتحة هي حركة قصيرة توضع فوق الحرف وتفتح لها الفم."
-        },
-        {
-            id: "Q6",
-            lesson: "الدرس الرابع: الحروف المتحركة",
-            level: "سهل",
-            type: "mcq",
-            question: "الحركة التي توضع تحت الحرف في الحروف المتحركة مثل (بِ) هي:",
-            options: ["الكسرة", "الفتحة", "الضمة", "الشدة"],
-            correct: 0,
-            explanation: "الكسرة حركة تكون تحت الحرف مثل بِ، تِ، ثِ."
-        },
-        {
-            id: "Q7",
-            lesson: "الدرس الخامس: تدريبات على الحركات",
-            level: "متوسط",
-            type: "mcq",
-            question: "في تدريبات الحركات (الدرس الخامس)، كيف تُهجى وتُقرأ كلمة (عَبَسَ)؟",
-            options: ["عَ بَ سَ - عَبَسَ", "عِ بِ سِ", "عُ بُ سُ", "عَبْ سَ"],
-            correct: 0,
-            explanation: "كلمة (عَبَسَ) مكونة من ثلاث أحرف مفتوحة: عَبَسَ."
-        },
-        {
-            id: "Q8",
-            lesson: "الدرس السادس: الحروف المنونة",
-            level: "متوسط",
-            type: "mcq",
-            question: "التنوين بالفتح على الحرف مثل (بًا) يُعبر عنه بـ:",
-            options: ["فتحتين", "كسرتين", "ضمتين", "سكون"],
-            correct: 0,
-            explanation: "التنوين بالفتح يكون بفتحتين على الحرف مع ألف التنوين غالباً."
-        },
-        {
-            id: "Q9",
-            lesson: "الدرس السابع: تدريبات على التنوين",
-            level: "متوسط",
-            type: "mcq",
-            question: "في تمارين التنوين، كيف تُقرأ الكلمة الواردة في الكتاب (أَبَدًا)؟",
-            options: ["أَبَدًا", "أَبَدٍ", "أَبَدُ", "أَبَدْ"],
-            correct: 0,
-            explanation: "من تمارين التنوين بالفتح في القاعدة النورانية كلمة (أَبَدًا)."
-        },
-        {
-            id: "Q10",
-            lesson: "الدرس الثامن: الحروف الصغيرة",
-            level: "صعب",
-            type: "mcq",
-            question: "ما هو الغرض من درس (الحروف الصغيرة) في القاعدة النورانية المطورة؟",
-            options: ["موافقة رسم المصحف (مثل مصحف المجمع) للحروف الخنجرية والصغيرة", "إصدار صوت عالٍ", "إيقاف القراءة", "تنوين الكلمات"],
-            correct: 0,
-            explanation: "تم تغيير اسم الحروف الطويلة إلى الحروف الصغيرة لموافقة رسم مصحف المجمع."
-        },
-        {
-            id: "Q11",
-            lesson: "الدرس العاشر: حروف المد",
-            level: "سهل",
-            type: "mcq",
-            question: "حروف المد الثلاثة المذكورة في القاعدة هي:",
-            options: ["الألف، الواو، الياء", "الفتحة، الكسرة، الضمة", "الشدة، السكون، التنوين", "الهمزة، الهاء، العين"],
-            correct: 0,
-            explanation: "حروف المد في الدرس العاشر هي الألف والواو والياء."
-        },
-        {
-            id: "Q12",
-            lesson: "الدرس الحادي عشر: تدريبات على حروف المد",
-            level: "متوسط",
-            type: "mcq",
-            question: "في تدريبات حروف المد، كيف تُقرأ كلمة (يَخَافُ)؟",
-            options: ["يَ-خَا-فُ (مد ألف)", "يَ-خَ-فَ", "يُ-خِ-فِ", "يَخْفُ"],
-            correct: 0,
-            explanation: "كلمة (يَخَافُ) تحتوي على مد بالالف بعد الخاء."
-        },
-        {
-            id: "Q13",
-            lesson: "الدرس الثاني عشر: حرفي اللين",
-            level: "متوسط",
-            type: "mcq",
-            question: "حرفا اللين في القاعدة النورانية هما الواو والياء الساكنتان المفتوح ما قبلهما مثل:",
-            options: ["تَوْ - تَيْ", "تُو - تِي", "تَ - تِ", "تّ - تْ"],
-            correct: 0,
-            explanation: "حرفا اللين هما الواو والياء الساكنتان المفتوح ما قبلهما (تَوْ، تَيْ)."
-        },
-        {
-            id: "Q14",
-            lesson: "الدرس الرابع عشر: السكون",
-            level: "متوسط",
-            type: "mcq",
-            question: "كيف يُهجى الحرف الساكن مع ما قبله في القاعدة النورانية (مثل أَبْ)؟",
-            options: ["همزة باء سكون أَبْ", "باء فتحة بَ", "ألف ضمة أُ", "با تنوين بْن"],
-            correct: 0,
-            explanation: "السكون يُهجى بنطق الحرف المتحرك مع الحرف الساكن قبله دفعة واحدة."
-        },
-        {
-            id: "Q15",
-            lesson: "الدرس الخامس عشر: تدريبات على السكون",
-            level: "صعب",
-            type: "mcq",
-            question: "في تدريبات السكون، الكلمة القرآنية الواردة (
+                <option value="classic">
