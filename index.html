@@ -1,0 +1,849 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>لعبة السلم والثعبان التعليمية | Educational Snakes & Ladders</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --primary-light: #818cf8;
+            --secondary: #06b6d4;
+            --accent: #f59e0b;
+            --success: #10b981;
+            --danger: #ef4444;
+            --bg-gradient: linear-gradient(135deg, #f0fdf4 0%, #e0f2fe 100%);
+            --card-bg: #ffffff;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Cairo', sans-serif;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background: var(--bg-gradient);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            overflow-x: hidden;
+            padding: 10px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 10px;
+            width: 100%;
+            max-width: 900px;
+        }
+
+        header h1 {
+            font-size: 1.6rem;
+            color: var(--primary);
+            font-weight: 900;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        header .subtitle {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 950px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            padding-bottom: 30px;
+        }
+
+        /* Screens */
+        .screen {
+            background: var(--card-bg);
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+            width: 100%;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+            animation: fadeIn 0.4s ease-in-out;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Buttons & Inputs */
+        .btn {
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(79, 70, 229, 0.4);
+        }
+
+        .btn:active {
+            transform: translateY(1px);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, var(--secondary), #3b82f6);
+            box-shadow: 0 4px 12px rgba(6, 182, 212, 0.3);
+        }
+
+        .btn-accent {
+            background: linear-gradient(135deg, var(--accent), #d97706);
+            box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #cbd5e1;
+            border-radius: 12px;
+            font-size: 1rem;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        input:focus, select:focus {
+            border-color: var(--primary);
+        }
+
+        .form-group {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            text-align: right;
+        }
+
+        .form-group label {
+            font-weight: 700;
+            font-size: 0.95rem;
+            color: var(--text-main);
+        }
+
+        /* Character Selection */
+        .char-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            width: 100%;
+        }
+
+        .char-card {
+            border: 3px solid #e2e8f0;
+            border-radius: 15px;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: #f8fafc;
+        }
+
+        .char-card.selected {
+            border-color: var(--primary);
+            background: #eef2ff;
+            transform: scale(1.02);
+        }
+
+        .char-card span {
+            font-size: 2.2rem;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .char-card h4 {
+            font-size: 1rem;
+            font-weight: 700;
+        }
+
+        /* Game Board UI */
+        .game-layout {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            width: 100%;
+        }
+
+        @media(min-width: 768px) {
+            .game-layout {
+                flex-direction: row;
+                align-items: flex-start;
+            }
+        }
+
+        .board-container {
+            flex: 1;
+            background: #fff;
+            border-radius: 15px;
+            padding: 10px;
+            box-shadow: inset 0 2px 8px rgba(0,0,0,0.05);
+            position: relative;
+            overflow: hidden;
+            aspect-ratio: 1 / 1;
+        }
+
+        .board {
+            display: grid;
+            grid-template-columns: repeat(10, 1fr);
+            grid-template-rows: repeat(10, 1fr);
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+
+        .cell {
+            border: 1px solid rgba(0,0,0,0.06);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: flex-start;
+            padding: 2px;
+            font-size: 0.65rem;
+            font-weight: 700;
+            position: relative;
+            background: #f8fafc;
+        }
+
+        .cell:nth-child(even) { background: #f1f5f9; }
+
+        .cell-num {
+            color: #94a3b8;
+            font-weight: 900;
+        }
+
+        .cell-icon {
+            font-size: 0.75rem;
+            align-self: center;
+        }
+
+        /* SVG Board Overlay for Snakes & Ladders */
+        svg.board-svg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 2;
+        }
+
+        /* Tokens on Board */
+        .tokens-layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 5;
+            display: grid;
+            grid-template-columns: repeat(10, 1fr);
+            grid-template-rows: repeat(10, 1fr);
+        }
+
+        .token-spot {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 2px;
+        }
+
+        .player-token {
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+            border: 2px solid white;
+            transition: all 0.3s ease;
+        }
+
+        /* Sidebar Control Panel */
+        .control-panel {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        @media(min-width: 768px) {
+            .control-panel {
+                width: 320px;
+            }
+        }
+
+        .player-card-box {
+            background: #f8fafc;
+            border-radius: 12px;
+            padding: 12px;
+            border: 2px solid #e2e8f0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: all 0.2s;
+        }
+
+        .player-card-box.active {
+            border-color: var(--primary);
+            background: #eef2ff;
+            box-shadow: 0 4px 12px rgba(79,70,229,0.15);
+        }
+
+        .player-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .player-avatar {
+            font-size: 2rem;
+            background: white;
+            padding: 5px;
+            border-radius: 50%;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        .dice-box {
+            background: white;
+            border-radius: 15px;
+            padding: 15px;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .dice {
+            width: 60px;
+            height: 60px;
+            background: white;
+            border: 3px solid var(--primary);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            font-weight: 900;
+            color: var(--primary);
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.05);
+            animation: bounceDice 0.5s ease;
+        }
+
+        @keyframes bounceDice {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.15) rotate(10deg); }
+        }
+
+        /* Modal Question Popup */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(4px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 15px;
+        }
+
+        .modal-card {
+            background: white;
+            border-radius: 20px;
+            width: 100%;
+            max-width: 500px;
+            padding: 25px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+            animation: modalPop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        @keyframes modalPop {
+            from { opacity: 0; transform: scale(0.8); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .question-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            font-weight: 700;
+            border-bottom: 2px solid #f1f5f9;
+            padding-bottom: 8px;
+        }
+
+        .question-text {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--text-main);
+            text-align: center;
+            line-height: 1.6;
+            background: #f8fafc;
+            padding: 15px;
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .options-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .option-btn {
+            background: #f8fafc;
+            border: 2px solid #cbd5e1;
+            padding: 12px 15px;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 700;
+            text-align: right;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: var(--text-main);
+        }
+
+        .option-btn:hover {
+            border-color: var(--primary);
+            background: #eef2ff;
+        }
+
+        .option-btn.correct {
+            background: #d1fae5 !important;
+            border-color: var(--success) !important;
+            color: #065f46 !important;
+        }
+
+        .option-btn.incorrect {
+            background: #fee2e2 !important;
+            border-color: var(--danger) !important;
+            color: #991b1b !important;
+        }
+
+        .explanation-box {
+            background: #fef3c7;
+            border: 2px solid #f59e0b;
+            padding: 12px;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            color: #92400e;
+            line-height: 1.5;
+        }
+
+        /* Footer Signature */
+        .developer-sig {
+            text-align: center;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-top: 5px;
+            font-weight: 600;
+        }
+
+        /* Achievements / Badges popup or panel */
+        .badge-tag {
+            background: #dbeafe;
+            color: #1e40af;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        /* Sound Toggle */
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            margin-bottom: 5px;
+        }
+
+        .icon-btn {
+            background: white;
+            border: 2px solid #e2e8f0;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 1.1rem;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>لعبة السلم والثعبان التعليمية</h1>
+    <div class="subtitle">مستوحاة حصرياً من كتاب "القاعدة النورانية الفتحية المطورة" | إعداد د. محسن الكاشف – Online Teacher Hub</div>
+</header>
+
+<div class="container">
+    
+    <!-- SCREEN 1: START & SETUP -->
+    <div id="screen-setup" class="screen">
+        <div style="text-align: center; gap: 5px; display: flex; flex-direction: column;">
+            <span style="font-size: 3rem;">🎲🐍</span>
+            <h2 style="color: var(--primary);">أهلاً بك في رحلة تعلم القاعدة النورانية</h2>
+            <p style="color: var(--text-muted); font-size: 0.9rem;">تعلم القراءة الصحيحة بمتعة وتشويق دون مغادرة المصدر الأصلي!</p>
+        </div>
+
+        <div class="form-group">
+            <label>وضع اللعب:</label>
+            <select id="game-mode-select" onchange="togglePlayer2Input()">
+                <option value="1">لاعب واحد ضد الكمبيوتر</option>
+                <option value="2">لاعبان (نفس الجهاز)</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>اسم اللاعب الأول:</label>
+            <input type="text" id="p1-name" value="البطل الأول" maxlength="15">
+        </div>
+        <div class="form-group">
+            <label>شخصية اللاعب الأول:</label>
+            <div class="char-grid" id="p1-chars">
+                <div class="char-card selected" onclick="selectChar(1, '🦁', this)"><span>🦁</span><h4>أسد صغير</h4></div>
+                <div class="char-card" onclick="selectChar(1, '🐰', this)"><span>🐰</span><h4>أرنب</h4></div>
+                <div class="char-card" onclick="selectChar(1, '🐼', this)"><span>🐼</span><h4>دب لطيف</h4></div>
+                <div class="char-card" onclick="selectChar(1, '🤖', this)"><span>🤖</span><h4>روبوت مرح</h4></div>
+            </div>
+        </div>
+
+        <div id="p2-setup-group" class="form-group hidden" style="border-top: 2px dashed #e2e8f0; padding-top: 15px;">
+            <label>اسم اللاعب الثاني:</label>
+            <input type="text" id="p2-name" value="البطل الثاني" maxlength="15">
+            <label style="margin-top: 10px;">شخصية اللاعب الثاني:</label>
+            <div class="char-grid" id="p2-chars">
+                <div class="char-card" onclick="selectChar(2, '🦁', this)"><span>🦁</span><h4>أسد صغير</h4></div>
+                <div class="char-card selected" onclick="selectChar(2, '🐰', this)"><span>🐰</span><h4>أرنب</h4></div>
+                <div class="char-card" onclick="selectChar(2, '🐼', this)"><span>🐼</span><h4>دب لطيف</h4></div>
+                <div class="char-card" onclick="selectChar(2, '🤖', this)"><span>🤖</span><h4>روبوت مرح</h4></div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>قواعد السلم والثعبان:</label>
+            <select id="rule-mode-select">
+                <option value="edu">الوضع التعليمي (يُشترط الإجابة الصحيحة لصعود السلم)</option>
+                <option value="classic">الوضع التقليدي (الحركة تلقائية والأسئلة للمكافآت)</option>
+            </select>
+        </div>
+
+        <button class="btn" style="width: 100%; margin-top: 10px;" onclick="startGame()">ابدأ اللعب الآن 🚀</button>
+        <div class="developer-sig">إعداد د. محسن الكاشف – Online Teacher Hub</div>
+    </div>
+
+    <!-- SCREEN 2: GAMEPLAY -->
+    <div id="screen-game" class="screen hidden" style="padding: 10px;">
+        <div class="top-bar">
+            <button class="icon-btn" onclick="toggleSound()" id="sound-toggle-btn" title="كتم/تشغيل الصوت">🔊</button>
+            <div style="font-weight: 700; font-size: 0.9rem; color: var(--primary);" id="current-rule-badge">الوضع التعليمي</div>
+            <button class="icon-btn" onclick="backToSetup()" title="العودة للبداية">🏠</button>
+        </div>
+
+        <div class="game-layout">
+            <!-- Board -->
+            <div class="board-container">
+                <svg class="board-svg" id="board-svg" viewBox="0 0 100 100" preserveAspectRatio="none"></svg>
+                <div class="board" id="board-grid"></div>
+                <div class="tokens-layer" id="tokens-layer"></div>
+            </div>
+
+            <!-- Control Panel -->
+            <div class="control-panel">
+                <!-- Player 1 Card -->
+                <div class="player-card-box" id="pcard-0">
+                    <div class="player-info">
+                        <div class="player-avatar" id="pavatar-0">🦁</div>
+                        <div>
+                            <h4 id="pname-disp-0">البطل الأول</h4>
+                            <div style="font-size: 0.8rem; color: var(--text-muted);">المربع: <span id="ppos-0">1</span></div>
+                        </div>
+                    </div>
+                    <div style="text-align: left;">
+                        <span class="badge-tag" id="pbadge-0">⭐ مبتدئ</span>
+                        <div style="font-size: 0.75rem; margin-top: 4px; color: var(--success);" id="pcorrect-0">صحيح: 0</div>
+                    </div>
+                </div>
+
+                <!-- Player 2 Card (if 2 players) -->
+                <div class="player-card-box hidden" id="pcard-1">
+                    <div class="player-info">
+                        <div class="player-avatar" id="pavatar-1">🐰</div>
+                        <div>
+                            <h4 id="pname-disp-1">البطل الثاني</h4>
+                            <div style="font-size: 0.8rem; color: var(--text-muted);">المربع: <span id="ppos-1">1</span></div>
+                        </div>
+                    </div>
+                    <div style="text-align: left;">
+                        <span class="badge-tag" id="pbadge-1">⭐ مبتدئ</span>
+                        <div style="font-size: 0.75rem; margin-top: 4px; color: var(--success);" id="pcorrect-1">صحيح: 0</div>
+                    </div>
+                </div>
+
+                <!-- Dice & Turn Box -->
+                <div class="dice-box">
+                    <div style="font-weight: 700; font-size: 1.05rem;" id="turn-indicator">دور اللاعب: البطل الأول</div>
+                    <div class="dice" id="dice-element">🎲</div>
+                    <button class="btn btn-accent" id="roll-dice-btn" onclick="rollDice()" style="width: 100%;">ارمِ النرد 🎯</button>
+                </div>
+            </div>
+        </div>
+        <div class="developer-sig">Online Teacher Hub – د. محسن الكاشف</div>
+    </div>
+
+    <!-- SCREEN 3: WIN SCREEN -->
+    <div id="screen-win" class="screen hidden" style="text-align: center;">
+        <span style="font-size: 4rem;">🏆🎉</span>
+        <h2 style="color: var(--primary); font-size: 1.8rem;" id="winner-announcement">تهانينا! فاز البطل</h2>
+        <p style="color: var(--text-muted);" id="winner-stats-text">أنهيت الرحلة التعليمية بنجاح كبير!</p>
+        
+        <div style="display: flex; gap: 10px; width: 100%; margin-top: 15px;">
+            <button class="btn" style="flex: 1;" onclick="restartGame()">العب مرة أخرى 🔄</button>
+            <button class="btn btn-secondary" style="flex: 1;" onclick="openMistakesModal()">مراجعة الأخطاء والتعلم 📖</button>
+        </div>
+        <button class="btn btn-accent" style="width: 100%; margin-top: 5px;" onclick="backToSetup()">العودة للرئيسية 🏠</button>
+        <div class="developer-sig">إعداد د. محسن الكاشف – Online Teacher Hub</div>
+    </div>
+
+</div>
+
+<!-- QUESTION MODAL -->
+<div id="question-modal" class="modal-overlay hidden">
+    <div class="modal-card">
+        <div class="question-header">
+            <span id="q-meta-info">الدرس الأول: الحروف الهجائية المفردة</span>
+            <span class="badge-tag" id="q-level-badge">سهل</span>
+        </div>
+        <div class="question-text" id="q-text-content">
+            ما هو اسم الحرف أو الإجابة الصحيحة هنا؟
+        </div>
+        <div class="options-grid" id="q-options-container">
+            <!-- Dynamic Options -->
+        </div>
+        <div class="explanation-box hidden" id="q-explanation-box">
+            <strong>التفسير من الكتاب: </strong><span id="q-explanation-text"></span>
+        </div>
+        <button class="btn hidden" id="q-next-btn" onclick="closeQuestionModal()">متابعة اللعب ➡️</button>
+    </div>
+</div>
+
+<!-- MISTAKES REVIEW MODAL -->
+<div id="mistakes-modal" class="modal-overlay hidden">
+    <div class="modal-card">
+        <h3 style="color: var(--primary); border-bottom: 2px solid #f1f5f9; padding-bottom: 8px;">مراجعة الأسئلة التعليمية</h3>
+        <div id="mistakes-list-container" style="display: flex; flex-direction: column; gap: 10px; max-height: 50vh; overflow-y: auto;">
+            <!-- Mistakes injected here -->
+        </div>
+        <button class="btn" onclick="closeMistakesModal()">إغلاق المراجعة</button>
+    </div>
+</div>
+
+<script>
+    /* ========================================================
+       QUESTION BANK (Strictly from "القاعدة النورانية الفتحية المطورة")
+       ======================================================== */
+    const questionBank = [
+        {
+            id: "Q1",
+            lesson: "الدرس الأول: الحروف الهجائية المفردة",
+            level: "سهل",
+            type: "mcq",
+            question: "في الدرس الأول (الحروف الهجائية المفردة)، كيف يُنطق الحرف الأول من الحروف الهجائية (أ)؟",
+            options: ["ألف", "با", "تا", "ثا"],
+            correct: 0,
+            explanation: "بحسب القاعدة النورانية في الدرس الأول، الحرف الأول هو (ألف)."
+        },
+        {
+            id: "Q2",
+            lesson: "الدرس الأول: الحروف الهجائية المفردة",
+            level: "سهل",
+            type: "mcq",
+            question: "ما هو الحرف الذي يأتي بعد (باء) في الحروف الهجائية المفردة؟",
+            options: ["ثا", "تا", "جيم", "حا"],
+            correct: 1,
+            explanation: "الترتيب الهجائي المفرد في القاعدة: ألف، با، تا، ثا."
+        },
+        {
+            id: "Q3",
+            lesson: "الدرس الثاني: الحروف الهجائية المركبة",
+            level: "متوسط",
+            type: "mcq",
+            question: "في الحروف المركبة (الدرس الثاني)، كيف تُقرأ صيغة (لا) المركبة من لام وألف؟",
+            options: ["لا", "با", "كا", "تا"],
+            correct: 0,
+            explanation: "تُهجى وتقرأ (لا) بحسب الحروف المركبة في القاعدة النورانية."
+        },
+        {
+            id: "Q4",
+            lesson: "الدرس الثالث: الحروف المقطعة",
+            level: "متوسط",
+            type: "mcq",
+            question: "في أوائل السور (الحروف المقطعة)، كيف يُقرأ مطلع سورة البقرة (الم)؟",
+            options: ["ألم", "المَر", "كهيعص", "طه"],
+            correct: 0,
+            explanation: "في الدرس الثالث، الحروف المقطعة في أوائل السور مثل (الم) تُقرأ متهجية مفصلة."
+        },
+        {
+            id: "Q5",
+            lesson: "الدرس الرابع: الحروف المتحركة",
+            level: "سهل",
+            type: "mcq",
+            question: "ما هي الحركة التي تكون فوق الحرف وتُحدث صوتاً خفيفاً مفتوحاً مثل (بَ)؟",
+            options: ["الفتحة", "الكسرة", " الضمة", "السكون"],
+            correct: 0,
+            explanation: "الفتحة هي حركة قصيرة توضع فوق الحرف وتفتح لها الفم."
+        },
+        {
+            id: "Q6",
+            lesson: "الدرس الرابع: الحروف المتحركة",
+            level: "سهل",
+            type: "mcq",
+            question: "الحركة التي توضع تحت الحرف في الحروف المتحركة مثل (بِ) هي:",
+            options: ["الكسرة", "الفتحة", "الضمة", "الشدة"],
+            correct: 0,
+            explanation: "الكسرة حركة تكون تحت الحرف مثل بِ، تِ، ثِ."
+        },
+        {
+            id: "Q7",
+            lesson: "الدرس الخامس: تدريبات على الحركات",
+            level: "متوسط",
+            type: "mcq",
+            question: "في تدريبات الحركات (الدرس الخامس)، كيف تُهجى وتُقرأ كلمة (عَبَسَ)؟",
+            options: ["عَ بَ سَ - عَبَسَ", "عِ بِ سِ", "عُ بُ سُ", "عَبْ سَ"],
+            correct: 0,
+            explanation: "كلمة (عَبَسَ) مكونة من ثلاث أحرف مفتوحة: عَبَسَ."
+        },
+        {
+            id: "Q8",
+            lesson: "الدرس السادس: الحروف المنونة",
+            level: "متوسط",
+            type: "mcq",
+            question: "التنوين بالفتح على الحرف مثل (بًا) يُعبر عنه بـ:",
+            options: ["فتحتين", "كسرتين", "ضمتين", "سكون"],
+            correct: 0,
+            explanation: "التنوين بالفتح يكون بفتحتين على الحرف مع ألف التنوين غالباً."
+        },
+        {
+            id: "Q9",
+            lesson: "الدرس السابع: تدريبات على التنوين",
+            level: "متوسط",
+            type: "mcq",
+            question: "في تمارين التنوين، كيف تُقرأ الكلمة الواردة في الكتاب (أَبَدًا)؟",
+            options: ["أَبَدًا", "أَبَدٍ", "أَبَدُ", "أَبَدْ"],
+            correct: 0,
+            explanation: "من تمارين التنوين بالفتح في القاعدة النورانية كلمة (أَبَدًا)."
+        },
+        {
+            id: "Q10",
+            lesson: "الدرس الثامن: الحروف الصغيرة",
+            level: "صعب",
+            type: "mcq",
+            question: "ما هو الغرض من درس (الحروف الصغيرة) في القاعدة النورانية المطورة؟",
+            options: ["موافقة رسم المصحف (مثل مصحف المجمع) للحروف الخنجرية والصغيرة", "إصدار صوت عالٍ", "إيقاف القراءة", "تنوين الكلمات"],
+            correct: 0,
+            explanation: "تم تغيير اسم الحروف الطويلة إلى الحروف الصغيرة لموافقة رسم مصحف المجمع."
+        },
+        {
+            id: "Q11",
+            lesson: "الدرس العاشر: حروف المد",
+            level: "سهل",
+            type: "mcq",
+            question: "حروف المد الثلاثة المذكورة في القاعدة هي:",
+            options: ["الألف، الواو، الياء", "الفتحة، الكسرة، الضمة", "الشدة، السكون، التنوين", "الهمزة، الهاء، العين"],
+            correct: 0,
+            explanation: "حروف المد في الدرس العاشر هي الألف والواو والياء."
+        },
+        {
+            id: "Q12",
+            lesson: "الدرس الحادي عشر: تدريبات على حروف المد",
+            level: "متوسط",
+            type: "mcq",
+            question: "في تدريبات حروف المد، كيف تُقرأ كلمة (يَخَافُ)؟",
+            options: ["يَ-خَا-فُ (مد ألف)", "يَ-خَ-فَ", "يُ-خِ-فِ", "يَخْفُ"],
+            correct: 0,
+            explanation: "كلمة (يَخَافُ) تحتوي على مد بالالف بعد الخاء."
+        },
+        {
+            id: "Q13",
+            lesson: "الدرس الثاني عشر: حرفي اللين",
+            level: "متوسط",
+            type: "mcq",
+            question: "حرفا اللين في القاعدة النورانية هما الواو والياء الساكنتان المفتوح ما قبلهما مثل:",
+            options: ["تَوْ - تَيْ", "تُو - تِي", "تَ - تِ", "تّ - تْ"],
+            correct: 0,
+            explanation: "حرفا اللين هما الواو والياء الساكنتان المفتوح ما قبلهما (تَوْ، تَيْ)."
+        },
+        {
+            id: "Q14",
+            lesson: "الدرس الرابع عشر: السكون",
+            level: "متوسط",
+            type: "mcq",
+            question: "كيف يُهجى الحرف الساكن مع ما قبله في القاعدة النورانية (مثل أَبْ)؟",
+            options: ["همزة باء سكون أَبْ", "باء فتحة بَ", "ألف ضمة أُ", "با تنوين بْن"],
+            correct: 0,
+            explanation: "السكون يُهجى بنطق الحرف المتحرك مع الحرف الساكن قبله دفعة واحدة."
+        },
+        {
+            id: "Q15",
+            lesson: "الدرس الخامس عشر: تدريبات على السكون",
+            level: "صعب",
+            type: "mcq",
+            question: "في تدريبات السكون، الكلمة القرآنية الواردة (
